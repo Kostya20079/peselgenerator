@@ -13,4 +13,9 @@ public class AuthController {
         model.addAttribute("registerRequest", new RegisterRequest());
         return "register";
     }
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";
+    }
 }
