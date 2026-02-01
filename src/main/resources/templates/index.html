@@ -1,67 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Generator PESEL</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<div class="container">
-    <header>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
         <h1>Generator PESEL</h1>
         <nav>
-            <a href="/" class="nav-link active">Strona główna</a>
-            <a href="/register" class="nav-link">Rejestracja</a>
-            <a href="/login" class="nav-link">Logowanie</a>
+          <a href="/" class="nav-link active">Strona główna</a>
+          <a href="/register" class="nav-link">Rejestracja</a>
+          <a href="/login" class="nav-link">Logowanie</a>
         </nav>
-    </header>
+      </header>
 
-    <main>
+      <main>
         <section class="hero">
-            <h2>Wygeneruj swój numer PESEL</h2>
-            <p>Wpisz poniższe dane, aby wygenerować losowy numer PESEL</p>
+          <h2>Wygeneruj swój numer PESEL</h2>
+          <p>Wpisz poniższe dane, aby wygenerować losowy numer PESEL</p>
         </section>
 
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div
+          th:if="${success}"
+          class="alert alert-success"
+          th:text="${success}"
+        ></div>
+        <div
+          th:if="${error}"
+          class="alert alert-error"
+          th:text="${error}"
+        ></div>
 
         <div th:if="${pesel}" class="result-box">
-            <h3>Wygenerowany numer PESEL:</h3>
-            <div class="pesel-display" id="peselDisplay" th:text="${pesel}"></div>
-            <button onclick="copyToClipboard()" class="btn btn-secondary">Skopiuj do schowka</button>
+          <h3>Wygenerowany numer PESEL:</h3>
+          <div class="pesel-display" id="peselDisplay" th:text="${pesel}"></div>
+          <button onclick="copyToClipboard()" class="btn btn-secondary">
+            Skopiuj do schowka
+          </button>
         </div>
-        <form th:action="@{/generate-single}" method="post" class="form-container">
-            <h3>Formularz generowania</h3>
+        <form
+          th:action="@{/generate-single}"
+          method="post"
+          class="form-container"
+        >
+          <h3>Formularz generowania</h3>
 
-            <div class="form-group">
-                <label for="birthDate">Data urodzenia:</label>
-                <input type="date" id="birthDate" name="birthDate" required>
-            </div>
+          <div class="form-group">
+            <label for="birthDate">Data urodzenia:</label>
+            <input type="date" id="birthDate" name="birthDate" required />
+          </div>
 
-            <div class="form-group">
-                <label for="gender">Płeć:</label>
-                <select id="gender" name="gender" required>
-                    <option value="">Wybierz</option>
-                    <option value="0">Kobieta</option>
-                    <option value="1">Mężczyzna</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="gender">Płeć:</label>
+            <select id="gender" name="gender" required>
+              <option value="">Wybierz</option>
+              <option value="0">Kobieta</option>
+              <option value="1">Mężczyzna</option>
+            </select>
+          </div>
 
-            <button type="submit" class="btn btn-primary">Generuj PESEL</button>
+          <button type="submit" class="btn btn-primary">Generuj PESEL</button>
         </form>
-    </main>
-</div>
+      </main>
+    </div>
 
-<script>
-    function copyToClipboard() {
-        const pesel = document.getElementById('peselDisplay').textContent;
-        navigator.clipboard.writeText(pesel).then(() => {
-            alert('Numer PESEL skopiowany do schowka!');
-        }).catch(() => {
-            alert('Błąd przy kopiowaniu');
-        });
-    }
-</script>
-</body>
+    <script>
+      function copyToClipboard() {
+        const pesel = document.getElementById("peselDisplay").textContent;
+        navigator.clipboard
+          .writeText(pesel)
+          .then(() => {
+            alert("Numer PESEL skopiowany do schowka!");
+          })
+          .catch(() => {
+            alert("Błąd przy kopiowaniu");
+          });
+      }
+    </script>
+  </body>
 </html>
