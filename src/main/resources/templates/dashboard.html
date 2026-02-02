@@ -1,0 +1,143 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Generator PESEL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Generator Numerów PESEL</h1>
+      </header>
+
+      <main>
+        <div
+          th:if="${success}"
+          class="alert alert-success"
+          th:text="${success}"
+        ></div>
+        <div
+          th:if="${error}"
+          class="alert alert-error"
+          th:text="${error}"
+        ></div>
+
+        <section class="dashboard-section">
+          <h2>Generator Masowy PESEL</h2>
+          <p class="section-description">
+            Wygeneruj wiele numerów PESEL jednocześnie i pobierz je lub wyślij
+            na email
+          </p>
+
+          <form id="peselForm" class="form-container">
+            <div class="form-group">
+              <label for="birthDate">Data urodzenia:</label>
+              <input type="date" id="birthDate" name="birthDate" required />
+            </div>
+
+            <div class="form-group">
+              <label for="gender">Płeć:</label>
+              <select id="gender" name="gender" required>
+                <option value="">Wybierz</option>
+                <option value="0">Kobieta</option>
+                <option value="1">Mężczyzna</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="count">Liczba numerów (1-200):</label>
+              <input
+                type="number"
+                id="count"
+                name="count"
+                min="1"
+                max="200"
+                placeholder="1"
+                value="1"
+                required
+              />
+            </div>
+
+            <div class="button-group">
+              <button
+                type="submit"
+                formaction="/generate-multiple"
+                class="btn btn-primary"
+              >
+                Generuj w aplikacji
+              </button>
+              <button
+                type="submit"
+                formaction="/download-pesel"
+                class="btn btn-secondary"
+              >
+                Pobierz jako .txt
+              </button>
+              <button
+                type="submit"
+                formaction="/send-email"
+                class="btn btn-tertiary"
+              >
+                Wyślij na email
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <div th:if="${pesels}" class="results-section">
+          <h3>Wygenerowane numery PESEL:</h3>
+          <p class="result-count">
+            Liczba wygenerowanych: <strong th:text="${pesels.size()}"></strong>
+          </p>
+          <div class="pesels-list">
+            <div
+              th:each="pesel : ${pesels}"
+              class="pesel-item"
+              th:text="${pesel}"
+            ></div>
+          </div>
+          <button onclick="copyAllToClipboard()" class="btn btn-secondary">
+            Skopiuj wszystkie
+          </button>
+        </div>
+
+        <section class="dashboard-section settings-section">
+          <h2>Ustawienia Konta</h2>
+          <div class="settings-info">
+            <p>
+              <strong>Imię i nazwisko:</strong>
+              <span th:text="${user.fullName}"></span>
+            </p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p>
+              <strong>Zarejestrowany:</strong>
+              <span
+                th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}"
+              ></span>
+            </p>
+          </div>
+          <a href="/logout" class="btn btn-danger">Wyloguj się</a>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      function copyAllToClipboard() {
+        const pesels = Array.from(document.querySelectorAll(".pesel-item"))
+          .map((el) => el.textContent)
+          .join("\n");
+
+        navigator.clipboard
+          .writeText(pesels)
+          .then(() => {
+            alert("Wszystkie numery PESEL skopiowane do schowka!");
+          })
+          .catch(() => {
+            alert("Błąd przy kopiowaniu");
+          });
+      }
+    </script>
+  </body>
+</html>
