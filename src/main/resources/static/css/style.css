@@ -17,7 +17,7 @@ body {
 header {
   text-align: center;
   margin-bottom: 30px;
-  border-bottom: 2px solid #4a6fa5;
+  border-bottom: 2px solid #ffa500;
   padding-bottom: 15px;
 }
 
@@ -33,7 +33,7 @@ nav {
 }
 
 .nav-link {
-  color: #4a6fa5;
+  color: #ffa500;
   text-decoration: none;
   font-weight: bold;
   padding: 5px 10px;
@@ -45,7 +45,7 @@ nav {
 
 .nav-link.active {
   color: white;
-  background-color: #4a6fa5;
+  background-color: #ffa500;
   border-radius: 3px;
 }
 
@@ -101,7 +101,7 @@ h3 {
   background-color: white;
   padding: 15px;
   margin: 15px 0;
-  border: 2px dashed #4a6fa5;
+  border: 2px dashed #ffa500;
   border-radius: 5px;
   font-family: monospace;
 }
@@ -136,8 +136,8 @@ select {
 input[type="date"]:focus,
 select:focus {
   outline: none;
-  border-color: #4a6fa5;
-  box-shadow: 0 0 5px rgba(74, 111, 165, 0.3);
+  border-color: #ffa500;
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
 }
 
 .btn {
@@ -151,13 +151,13 @@ select:focus {
 }
 
 .btn-primary {
-  background-color: #4a6fa5;
+  background-color: #ffa500;
   color: white;
   width: 100%;
 }
 
 .btn-primary:hover {
-  background-color: #3a5a85;
+  background-color: #ff8c00;
 }
 
 .btn-secondary {
@@ -185,7 +185,7 @@ select:focus {
   margin-bottom: 25px;
   text-align: center;
   padding-bottom: 15px;
-  border-bottom: 2px solid #4a6fa5;
+  border-bottom: 2px solid #ffa500;
 }
 
 .form-container input[type="text"],
@@ -204,8 +204,8 @@ select:focus {
 .form-container input[type="email"]:focus,
 .form-container input[type="password"]:focus {
   outline: none;
-  border-color: #4a6fa5;
-  box-shadow: 0 0 5px rgba(74, 111, 165, 0.3);
+  border-color: #ffa500;
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
 }
 
 .form-container input[type="text"]::placeholder,
@@ -240,7 +240,7 @@ select:focus {
 }
 
 .auth-link a {
-  color: #4a6fa5;
+  color: #ffa500;
   text-decoration: none;
   font-weight: bold;
   margin-left: 5px;
@@ -265,7 +265,7 @@ select:focus {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 25px;
-  border-left: 4px solid #4a6fa5;
+  border-left: 4px solid #ffa500;
 }
 
 .dashboard-section h2 {
@@ -334,7 +334,7 @@ select:focus {
 }
 
 .result-count {
-  color: #4a6fa5;
+  color: #ffa500;
   font-size: 16px;
   margin-bottom: 15px;
   padding: 8px;
