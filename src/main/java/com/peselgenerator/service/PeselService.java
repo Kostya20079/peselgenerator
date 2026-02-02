@@ -1,12 +1,15 @@
 package com.peselgenerator.service;
 
+import com.peselgenerator.entity.GeneratedPesel;
+import com.peselgenerator.entity.User;
 import com.peselgenerator.repository.GeneratedPeselRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -21,6 +24,48 @@ public class PeselService {
             return generatePesel(birthDate, gender);
         } catch (Exception e) {
             throw new RuntimeException("Error while generating PESEL: " + e.getMessage());
+        }
+    }
+
+    public List<String> generateMultiplePesel(String birthDateStr, int gender, int count) {
+        try {
+            LocalDate birthDate = LocalDate.parse(birthDateStr);
+            List<String> pesels = new ArrayList<>();
+            // for unique pesel numbers
+            Set<String> uniquePesels = new HashSet<>();
+
+            int maxAttempts = count * 10;
+            int attempts = 0;
+
+            while (uniquePesels.size() < count && attempts < maxAttempts) {
+                String pesel = generatePesel(birthDate, gender);
+                uniquePesels.add(pesel);
+                attempts++;
+            }
+
+            pesels.addAll(uniquePesels);
+            return pesels;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while generating many PESELs: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void savePesels(User user, List<String> pesels) {
+        try {
+            for (String pesel : pesels) {
+                // check if pesel is already exists in db
+                if (!generatedPeselRepository.existsByPeselNumber(pesel)) {
+                    GeneratedPesel generatedPesel = GeneratedPesel.builder()
+                            .user(user)
+                            .peselNumber(pesel)
+                            .build();
+                    generatedPeselRepository.save(generatedPesel);
+                }
+            }
+            log.info("{} PESEL numbers saved for the user: {}", pesels.size(), user.getEmail());
+        } catch (Exception e) {
+            throw new RuntimeException("Error while writing PESEL: " + e.getMessage());
         }
     }
 

@@ -290,10 +290,19 @@ select:focus {
 
 .button-group .btn {
   flex: 1;
-  min-width: 180px;
+  min-width: 200px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .btn-tertiary {
+  margin-top: 10px;
   background-color: #17a2b8;
   color: white;
 }

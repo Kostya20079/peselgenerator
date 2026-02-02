@@ -4,12 +4,20 @@ import com.peselgenerator.dto.GeneratePeselRequest;
 import com.peselgenerator.entity.User;
 import com.peselgenerator.service.PeselService;
 import com.peselgenerator.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
+@Slf4j
 @Controller
 @AllArgsConstructor
 public class PeselController {
@@ -25,5 +33,66 @@ public class PeselController {
         model.addAttribute("user", user);
         model.addAttribute("generateRequest", new GeneratePeselRequest());
         return "dashboard";
+    }
+
+    @PostMapping("/generate-multiple")
+    public String generateMultiple(
+            @Valid GeneratePeselRequest request,
+            BindingResult result,
+            Authentication authentication,
+            Model model) {
+
+        log.info("Generating multiple PESELs");
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+        model.addAttribute("user", user);
+        model.addAttribute("generateRequest", new GeneratePeselRequest());
+
+        // check validation
+        if (result.hasErrors()) {
+            return "dashboard";
+        }
+
+        try {
+            // generating pesels
+            List<String> pesels = peselService.generateMultiplePesel(
+                    request.getBirthDate(),
+                    request.getGender(),
+                    request.getCount()
+            );
+
+            // writing to db
+            peselService.savePesels(user, pesels);
+
+            model.addAttribute("pesels", pesels);
+            model.addAttribute("success", "Generated " + pesels.size() + " PESEL numbers!");
+
+        } catch (Exception e) {
+            log.error("Error generating PESELs: ", e);
+            model.addAttribute("error", "Error: " + e.getMessage());
+        }
+
+        return "dashboard";
+    }
+
+    @PostMapping("/download-pesel")
+    public ResponseEntity<byte[]> downloadPesel(
+            @Valid GeneratePeselRequest request,
+            BindingResult result,
+            Authentication authentication) {
+
+
+        return null;
+    }
+
+    @PostMapping("/send-email")
+    public String sendEmail(
+            @Valid GeneratePeselRequest request,
+            BindingResult result,
+            Authentication authentication,
+            Model model) {
+
+        return null;
     }
 }
