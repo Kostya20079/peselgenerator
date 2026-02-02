@@ -7,6 +7,9 @@ import com.peselgenerator.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -82,8 +86,37 @@ public class PeselController {
             BindingResult result,
             Authentication authentication) {
 
+        // check validation
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        return null;
+        try {
+            List<String> pesels = peselService.generateMultiplePesel(
+                    request.getBirthDate(),
+                    request.getGender(),
+                    request.getCount()
+            );
+
+            String email = authentication.getName();
+            User user = userService.findByEmail(email);
+            peselService.savePesels(user, pesels);
+
+            // preparing the file contents
+            String content = String.join("\n", pesels);
+            byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+
+            // HTTP headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.TEXT_PLAIN);
+            headers.setContentLength(bytes.length);
+            headers.set("Content-Disposition", "attachment; filename=\"pesels_" + System.currentTimeMillis() + ".txt\"");
+
+            return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/send-email")
