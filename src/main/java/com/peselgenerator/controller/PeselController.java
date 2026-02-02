@@ -2,8 +2,10 @@ package com.peselgenerator.controller;
 
 import com.peselgenerator.dto.GeneratePeselRequest;
 import com.peselgenerator.entity.User;
+import com.peselgenerator.service.EmailService;
 import com.peselgenerator.service.PeselService;
 import com.peselgenerator.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ public class PeselController {
 
     private final PeselService peselService;
     private final UserService userService;
+    private final EmailService emailService;
 
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
@@ -126,6 +129,39 @@ public class PeselController {
             Authentication authentication,
             Model model) {
 
-        return null;
+        // check validation
+        if (result.hasErrors()) {
+            model.addAttribute("generateRequest", new GeneratePeselRequest());
+            return "dashboard";
+        }
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+        model.addAttribute("user", user);
+        model.addAttribute("generateRequest", new GeneratePeselRequest());
+
+
+        try {
+            List<String> pesels = peselService.generateMultiplePesel(
+                    request.getBirthDate(),
+                    request.getGender(),
+                    request.getCount()
+            );
+
+            peselService.savePesels(user, pesels);
+
+            // sending mail
+            emailService.sendPeselsToEmail(email, pesels);
+
+            model.addAttribute("success", "Numery PESEL zostały wysłane na Twój email!");
+
+        } catch (MessagingException e) {
+            model.addAttribute("error", "Error while sending email!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Error: " + e.getMessage());
+        }
+
+        model.addAttribute("generateRequest", new GeneratePeselRequest());
+        return "dashboard";
     }
 }
