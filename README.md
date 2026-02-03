@@ -10,6 +10,7 @@ A web application for generating random PESEL numbers with a user authentication
 - [Configuration](#configuration)
 - [Project Structure](#project-structure)
 - [Security](#security)
+- [Author](#author)
 
 ---
 
@@ -130,3 +131,7 @@ peselgenerator/
 - ✅ CSRF protection
 - ✅ User session management
 - ✅ Input data validation
+
+## 👨‍💻 Author
+
+This project was created for educational purposes.
