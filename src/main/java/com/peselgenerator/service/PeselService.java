@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Service responsible for the logic of generating and validating PESEL numbers.
+ *
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -18,6 +22,14 @@ public class PeselService {
 
     private final GeneratedPeselRepository generatedPeselRepository;
 
+    /**
+     * Generates a single PESEL number.
+     *
+     * @param birthDateStr the birth date in ISO format (YYYY-MM-DD).
+     * @param gender       the gender code (0 for female, 1 for male).
+     * @return a valid 11-digit PESEL string.
+     * @throws RuntimeException if the date format is invalid or generation fails.
+     */
     public String generateSinglePesel(String birthDateStr, int gender) {
         try {
             LocalDate birthDate = LocalDate.parse(birthDateStr);
@@ -27,6 +39,16 @@ public class PeselService {
         }
     }
 
+    /**
+     * Generates multiple unique PESEL numbers.
+     * Ensures uniqueness within the generated batch.
+     *
+     * @param birthDateStr the birth date in ISO format.
+     * @param gender       the gender code.
+     * @param count        the number of PESELs to generate.
+     * @return a list of unique PESEL strings.
+     * @throws RuntimeException if generation fails.
+     */
     public List<String> generateMultiplePesel(String birthDateStr, int gender, int count) {
         try {
             LocalDate birthDate = LocalDate.parse(birthDateStr);
@@ -50,6 +72,13 @@ public class PeselService {
         }
     }
 
+    /**
+     * Persists a list of generated PESELs to the database for a specific user.
+     * Checks if the PESEL already exists globally in the DB before saving.
+     *
+     * @param user   the user who generated the numbers.
+     * @param pesels the list of PESEL strings.
+     */
     @Transactional
     public void savePesels(User user, List<String> pesels) {
         try {
@@ -70,11 +99,19 @@ public class PeselService {
     }
 
     /**
-     * PESEL: 11 digits in format: YYMMDDXXXGC
-     * - YYMMDD: date of birth
-     * - XXX: serial number
-     * - G: gender
-     * - C: checksum
+     * Internal method to construct a PESEL string.
+     * <p>
+     * PESEL format: YYMMDDXXXGC
+     * <ul>
+     * <li>YYMMDD: date of birth (Year, Month, Day)</li>
+     * <li>XXX: serial number (random)</li>
+     * <li>G: gender digit (even for female, odd for male)</li>
+     * <li>C: checksum</li>
+     * </ul>
+     *
+     * @param birthDate date of birth.
+     * @param gender    0 (female) or 1 (male).
+     * @return constructed PESEL string.
      */
     private String generatePesel(LocalDate birthDate, int gender) {
         StringBuilder pesel = new StringBuilder();
@@ -112,13 +149,16 @@ public class PeselService {
 
 
     /**
-     * Calculates the PESEL checksum
-     * scales: 1, 3, 7, 9, 1, 3, 7, 9, 1, 3
+     * Calculates the PESEL checksum digit.
+     * <p>
+     * Algorithm:
+     * 1. Multiply each of the first 10 digits by corresponding weight: 1, 3, 7, 9, 1, 3, 7, 9, 1, 3.
+     * 2. Sum the products.
+     * 3. M = sum % 10.
+     * 4. Checksum = (10 - M) % 10.
      *
-     * 1. Multiply each digit by its corresponding weight
-     * 2. Sum up all the products
-     * 3. Divide the sum by 10 and take the remainder
-     * 4. Subtract from 10 this is the check digit
+     * @param peselWithoutChecksum the first 10 digits of the PESEL.
+     * @return the calculated checksum digit.
      */
     private int calculateChecksum(String peselWithoutChecksum) {
         int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};

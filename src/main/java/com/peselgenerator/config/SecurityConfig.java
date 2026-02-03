@@ -11,11 +11,31 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * Configuration class for Spring Security.
+ * Defines authentication rules, password encoding, and HTTP security settings.
+ */
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
+    /**
+     * Configures the security filter chain for HTTP requests.
+     * <p>
+     * Sets up:
+     * <ul>
+     * <li>Public access for static resources and landing pages.</li>
+     * <li>Authenticated access for dashboard and generation endpoints.</li>
+     * <li>Form login configuration.</li>
+     * <li>Logout handling with session invalidation.</li>
+     * <li>CSRF protection using CookieCsrfTokenRepository.</li>
+     * </ul>
+     *
+     * @param http the {@link HttpSecurity} object to configure.
+     * @return the configured {@link SecurityFilterChain}.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -49,6 +69,12 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Defines the password encoder bean.
+     * Uses BCrypt hashing algorithm with a strength of 12.
+     *
+     * @return a {@link BCryptPasswordEncoder} instance.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);

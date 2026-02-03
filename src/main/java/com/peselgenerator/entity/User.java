@@ -16,6 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Entity representing an application user.
+ * Implements {@link UserDetails} for Spring Security integration.
+ */
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Data
@@ -52,6 +56,10 @@ public class User implements UserDetails {
         createdAt = LocalDateTime.now();
     }
 
+    /**
+     * Returns the authorities granted to the user.
+     * Currently, all users are assigned "ROLE_USER".
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));

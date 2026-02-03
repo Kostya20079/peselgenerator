@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ * Service responsible for email operations.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,13 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    /**
+     * Sends an email containing the generated PESEL numbers as a text file attachment.
+     *
+     * @param toEmail the recipient's email address.
+     * @param pesels  the list of generated PESEL numbers.
+     * @throws MessagingException if creating or sending the message fails.
+     */
     public void sendPeselsToEmail(String toEmail, List<String> pesels) throws MessagingException {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
@@ -52,7 +62,12 @@ public class EmailService {
     }
 
 
-
+    /**
+     * Builds the HTML body for the email.
+     *
+     * @param peselCount the number of PESELs generated.
+     * @return HTML string.
+     */
     private String buildEmailBody(int peselCount) {
         return """
                 <html>

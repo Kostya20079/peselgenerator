@@ -1,0 +1,7 @@
+com.peselgenerator
+com.peselgenerator.config
+com.peselgenerator.controller
+com.peselgenerator.dto
+com.peselgenerator.entity
+com.peselgenerator.repository
+com.peselgenerator.service

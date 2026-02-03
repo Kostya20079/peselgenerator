@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Controller for the protected dashboard area.
+ * Handles multiple PESEL generation, saving to database, file downloads, and email sending.
+ */
 @Slf4j
 @Controller
 @AllArgsConstructor
@@ -32,6 +36,13 @@ public class PeselController {
     private final UserService userService;
     private final EmailService emailService;
 
+    /**
+     * Displays the user dashboard.
+     *
+     * @param authentication the current user's authentication token.
+     * @param model          the UI model.
+     * @return the dashboard view name.
+     */
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
         String email = authentication.getName();
@@ -42,6 +53,15 @@ public class PeselController {
         return "dashboard";
     }
 
+    /**
+     * Generates multiple PESEL numbers and saves them to the user's history.
+     *
+     * @param request        the generation parameters.
+     * @param result         validation results.
+     * @param authentication current user.
+     * @param model          UI model.
+     * @return the dashboard view.
+     */
     @PostMapping("/generate-multiple")
     public String generateMultiple(
             @Valid GeneratePeselRequest request,
@@ -83,6 +103,14 @@ public class PeselController {
         return "dashboard";
     }
 
+    /**
+     * Generates PESEL numbers and offers them as a text file download.
+     *
+     * @param request        generation parameters.
+     * @param result         validation results.
+     * @param authentication current user.
+     * @return a {@link ResponseEntity} containing the file bytes or an error status.
+     */
     @PostMapping("/download-pesel")
     public ResponseEntity<byte[]> downloadPesel(
             @Valid GeneratePeselRequest request,
@@ -122,6 +150,15 @@ public class PeselController {
         }
     }
 
+    /**
+     * Generates PESEL numbers and sends them to the user's email address.
+     *
+     * @param request        generation parameters.
+     * @param result         validation results.
+     * @param authentication current user.
+     * @param model          UI model.
+     * @return the dashboard view with success/error message.
+     */
     @PostMapping("/send-email")
     public String sendEmail(
             @Valid GeneratePeselRequest request,
